@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -9,9 +9,9 @@ const SPRING   = 0.04;
 const DAMPING  = 0.88;
 const CANVAS_W = 900;
 const CANVAS_H = 180;
-const STEP     = 3;
-const SCALE_X  = 5.5;
-const SCALE_Y  = 5.5 * (CANVAS_H / CANVAS_W); // ≈ 1.1
+const STEP     = 6;
+const SCALE_X  = 11.0;                           // fills more of the viewport width
+const SCALE_Y  = 11.0 * (CANVAS_H / CANVAS_W); // ≈ 2.2, preserves letter proportions
 
 const REPULSION_RADIUS = 1.2;
 const REPULSION_FORCE  = 0.15;
@@ -20,12 +20,14 @@ const REPULSION_FORCE  = 0.15;
 const vertexShader = /* glsl */`
   attribute vec3 aColor;
   uniform float uSize;
+  uniform float uDPR;
   varying vec3 vColor;
 
   void main() {
     vColor = aColor;
     vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
-    gl_PointSize = uSize * 180.0 / -mvPos.z;
+    // 10.0 * DPR gives ~5-6 CSS px at camera z=3.5 — clearly readable
+    gl_PointSize = clamp(uSize * 10.0 * uDPR / -mvPos.z, 0.5, 20.0);
     gl_Position = projectionMatrix * mvPos;
   }
 `;
@@ -99,8 +101,14 @@ function HoloParticles({ positions, colors, count }: {
   colors:    Float32Array;
   count:     number;
 }) {
-  const meshRef    = useRef<THREE.Points>(null);
+  const meshRef     = useRef<THREE.Points>(null);
   const materialRef = useRef<THREE.ShaderMaterial>(null);
+  const { gl }      = useThree();
+
+  const uniforms = useMemo(() => ({
+    uSize: { value: 1.8 },
+    uDPR:  { value: gl.getPixelRatio() },
+  }), [gl]);
 
   // Physics state stored as refs (mutated every frame, no re-render needed)
   const originalPos = useRef<Float32Array>(new Float32Array(positions));
@@ -199,7 +207,7 @@ function HoloParticles({ positions, colors, count }: {
           ref={materialRef}
           vertexShader={vertexShader}
           fragmentShader={fragmentShader}
-          uniforms={{ uSize: { value: 1.8 } }}
+          uniforms={uniforms}
           blending={THREE.AdditiveBlending}
           depthWrite={false}
           transparent
@@ -224,7 +232,7 @@ export default function HoloGenTitle() {
     });
   }, []);
 
-  if (!particleData) return <div style={{ width: '100%', height: 160 }} />;
+  if (!particleData) return <div style={{ width: '100%', height: 240 }} />;
 
   return (
     <Canvas
@@ -235,7 +243,7 @@ export default function HoloGenTitle() {
         powerPreference:  'high-performance',
       }}
       dpr={typeof window !== 'undefined' ? Math.min(window.devicePixelRatio, 2) : 1}
-      style={{ width: '100%', height: 160, background: 'transparent' }}
+      style={{ width: '100%', height: 240, background: 'transparent' }}
     >
       <HoloParticles
         positions={particleData.positions}
