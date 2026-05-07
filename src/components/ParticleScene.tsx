@@ -151,13 +151,13 @@ export default function ParticleScene({ imageDataUrl, controls, onShapeChange }:
 
       {/* Shape toggle pill — top centre */}
       {image && !loading && (
-        <div className="absolute top-5 left-1/2 -translate-x-1/2 z-20 flex gap-0.5 p-1 rounded-xl bg-surface-800/90 backdrop-blur border border-surface-600 shadow-lg select-none">
+        <div className="absolute top-5 left-1/2 -translate-x-1/2 z-30 flex gap-0.5 p-1 rounded-xl bg-surface-800/90 backdrop-blur border border-surface-600 shadow-lg select-none">
           {(['circle', 'square'] as const).map((s) => (
             <button
               key={s}
               onClick={() => onShapeChange(s)}
               className={[
-                'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-mono transition-all',
+                'flex items-center gap-1.5 px-4 py-2 sm:px-3 sm:py-1.5 rounded-lg text-[12px] sm:text-[11px] font-mono transition-all',
                 controls.shape === s
                   ? 'bg-accent text-white shadow'
                   : 'text-white/40 hover:text-white/70',

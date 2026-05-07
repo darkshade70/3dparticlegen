@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
+import type { PerspectiveCamera } from 'three';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const SPRING   = 0.04;
@@ -93,6 +94,20 @@ function sampleText(): { positions: Float32Array; colors: Float32Array; count: n
     colors:    new Float32Array(colArr),
     count,
   };
+}
+
+// ─── Adjusts camera z so SCALE_X always fits the canvas width ─────────────────
+function CameraFit() {
+  const { camera, size } = useThree();
+  useEffect(() => {
+    const cam = camera as PerspectiveCamera;
+    const fovRad = (cam.fov * Math.PI) / 180;
+    const aspect = size.width / size.height;
+    const needed = (SCALE_X / 2) / (Math.tan(fovRad / 2) * aspect) * 1.12;
+    cam.position.z = Math.max(3.5, needed);
+    cam.updateProjectionMatrix();
+  }, [camera, size]);
+  return null;
 }
 
 // ─── Inner scene (must be inside <Canvas>) ───────────────────────────────────
@@ -245,6 +260,7 @@ export default function HoloGenTitle() {
       dpr={typeof window !== 'undefined' ? Math.min(window.devicePixelRatio, 2) : 1}
       style={{ width: '100%', height: 240, background: 'transparent' }}
     >
+      <CameraFit />
       <HoloParticles
         positions={particleData.positions}
         colors={particleData.colors}

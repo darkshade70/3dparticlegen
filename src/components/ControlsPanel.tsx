@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { ParticleControls } from '@/lib/types';
 
 type NumericKey = Exclude<keyof ParticleControls, 'shape'>;
@@ -74,8 +74,12 @@ const INTERACTION_SLIDERS: SliderDef[] = [
 ];
 
 export default function ControlsPanel({ controls, onChange, onNewImage, onResetView }: Props) {
-  const [open,       setOpen]       = useState(true);
+  const [open,       setOpen]       = useState(false);
   const [activeHint, setActiveHint] = useState<string | null>(null);
+
+  useEffect(() => {
+    setOpen(window.innerWidth >= 768);
+  }, []);
 
   const set = (key: NumericKey, value: number) =>
     onChange({ ...controls, [key]: value });

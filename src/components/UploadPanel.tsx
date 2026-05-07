@@ -10,7 +10,7 @@ interface Props {
 
 type Tab = 'upload' | 'draw';
 
-const ACCEPTED = ['image/png', 'image/jpeg', 'image/webp'];
+const ACCEPTED = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/heic', 'image/heif'];
 
 export default function UploadPanel({ onUpload }: Props) {
   const [tab,      setTab]      = useState<Tab>('upload');
@@ -20,8 +20,8 @@ export default function UploadPanel({ onUpload }: Props) {
 
   const handleFile = useCallback(
     (file: File) => {
-      if (!ACCEPTED.includes(file.type)) {
-        setError('Unsupported format — use PNG, JPG, or WEBP.');
+      if (!file.type.startsWith('image/') && !ACCEPTED.includes(file.type)) {
+        setError('Unsupported format — use PNG, JPG, WEBP, or HEIC.');
         return;
       }
       setError(null);
@@ -99,12 +99,12 @@ export default function UploadPanel({ onUpload }: Props) {
               <input
                 ref={inputRef}
                 type="file"
-                accept=".png,.jpg,.jpeg,.webp"
+                accept="image/*"
                 className="hidden"
                 onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
               />
 
-              <div className="flex flex-col items-center gap-4 py-14 px-8">
+              <div className="flex flex-col items-center gap-4 py-10 sm:py-14 px-8">
                 <div className={[
                   'w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-200',
                   dragging ? 'bg-accent/20' : 'bg-surface-700',
@@ -119,9 +119,17 @@ export default function UploadPanel({ onUpload }: Props) {
                 </div>
                 <div className="flex flex-col gap-1 text-center">
                   <p className="text-sm font-medium text-white/80">
-                    {dragging ? 'Drop to transform' : 'Drop an image here'}
+                    {dragging ? 'Drop to transform' : (
+                      <>
+                        <span className="sm:hidden">Tap to choose a photo</span>
+                        <span className="hidden sm:inline">Drop an image here</span>
+                      </>
+                    )}
                   </p>
-                  <p className="text-xs text-white/30">or click to browse — PNG, JPG, WEBP</p>
+                  <p className="text-xs text-white/30">
+                    <span className="sm:hidden">PNG, JPG, WEBP or camera photo</span>
+                    <span className="hidden sm:inline">or click to browse — PNG, JPG, WEBP</span>
+                  </p>
                 </div>
               </div>
             </div>
