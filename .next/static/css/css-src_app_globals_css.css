@@ -547,6 +547,12 @@ video {
 .z-20 {
   z-index: 20;
 }
+.z-30 {
+  z-index: 30;
+}
+.z-50 {
+  z-index: 50;
+}
 .mb-1 {
   margin-bottom: 0.25rem;
 }
@@ -561,6 +567,9 @@ video {
 }
 .mt-3 {
   margin-top: 0.75rem;
+}
+.mb-4 {
+  margin-bottom: 1rem;
 }
 .block {
   display: block;
@@ -720,6 +729,9 @@ video {
 .gap-6 {
   gap: 1.5rem;
 }
+.gap-8 {
+  gap: 2rem;
+}
 .overflow-hidden {
   overflow: hidden;
 }
@@ -737,6 +749,9 @@ video {
 }
 .rounded-xl {
   border-radius: 0.75rem;
+}
+.rounded-none {
+  border-radius: 0px;
 }
 .border {
   border-width: 1px;
@@ -807,6 +822,10 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(5 5 7 / var(--tw-bg-opacity, 1));
 }
+.bg-white {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+}
 .p-1 {
   padding: 0.25rem;
 }
@@ -852,10 +871,6 @@ video {
   padding-top: 2.5rem;
   padding-bottom: 2.5rem;
 }
-.py-14 {
-  padding-top: 3.5rem;
-  padding-bottom: 3.5rem;
-}
 .py-2 {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
@@ -879,6 +894,9 @@ video {
 .text-\[11px\] {
   font-size: 11px;
 }
+.text-\[12px\] {
+  font-size: 12px;
+}
 .text-\[9px\] {
   font-size: 9px;
 }
@@ -889,6 +907,10 @@ video {
 .text-xs {
   font-size: 0.75rem;
   line-height: 1rem;
+}
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
 }
 .font-medium {
   font-weight: 500;
@@ -914,6 +936,9 @@ video {
 }
 .tracking-widest {
   letter-spacing: 0.1em;
+}
+.tracking-wide {
+  letter-spacing: 0.025em;
 }
 .text-accent-glow {
   --tw-text-opacity: 1;
@@ -949,6 +974,10 @@ video {
 }
 .text-white\/80 {
   color: rgb(255 255 255 / 0.8);
+}
+.text-black {
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity, 1));
 }
 .antialiased {
   -webkit-font-smoothing: antialiased;
@@ -1138,6 +1167,9 @@ input[type='range']::-moz-range-thumb {
   --tw-bg-opacity: 1;
   background-color: rgb(13 13 18 / var(--tw-bg-opacity, 1));
 }
+.hover\:bg-white\/90:hover {
+  background-color: rgb(255 255 255 / 0.9);
+}
 .hover\:text-white\/60:hover {
   color: rgb(255 255 255 / 0.6);
 }
@@ -1160,6 +1192,33 @@ input[type='range']::-moz-range-thumb {
 
   .sm\:block {
     display: block;
+  }
+
+  .sm\:inline {
+    display: inline;
+  }
+
+  .sm\:hidden {
+    display: none;
+  }
+
+  .sm\:px-3 {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .sm\:py-1\.5 {
+    padding-top: 0.375rem;
+    padding-bottom: 0.375rem;
+  }
+
+  .sm\:py-14 {
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
+  }
+
+  .sm\:text-\[11px\] {
+    font-size: 11px;
   }
 }
 

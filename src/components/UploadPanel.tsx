@@ -8,12 +8,10 @@ interface Props {
   onUpload: (dataUrl: string) => void;
 }
 
-type Tab = 'upload' | 'draw';
-
 const ACCEPTED = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/heic', 'image/heif'];
 
 export default function UploadPanel({ onUpload }: Props) {
-  const [tab,      setTab]      = useState<Tab>('upload');
+  const [showDraw, setShowDraw] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [error,    setError]    = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -45,44 +43,46 @@ export default function UploadPanel({ onUpload }: Props) {
   );
 
   return (
-    <div className="flex items-center justify-center w-full h-full bg-surface-900 overflow-y-auto">
+    <div
+      className="flex items-center justify-center w-full h-full bg-surface-900 overflow-y-auto"
+      onDragEnter={(e) => { e.preventDefault(); setDragging(true); }}
+      onDragOver={(e)  => { e.preventDefault(); setDragging(true); }}
+      onDragLeave={() => setDragging(false)}
+      onDrop={onDrop}
+    >
       {/* Ambient glow */}
       <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
         <div className="w-[700px] h-[700px] rounded-full bg-accent/5 blur-[140px]" />
       </div>
 
-      <div className="relative z-10 flex flex-col items-center gap-6 px-4 py-10 w-full max-w-2xl">
+      {/* Drop overlay */}
+      {dragging && (
+        <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center border-2 border-accent rounded-none bg-accent/5">
+          <p className="text-2xl font-semibold text-white">Drop to transform</p>
+        </div>
+      )}
+
+      <div className="relative z-10 flex flex-col items-center gap-8 px-4 py-10 w-full max-w-2xl">
 
         {/* Title */}
         <div className="flex flex-col items-center gap-2 w-full">
           <HoloGenTitle />
           <p className="text-sm text-white/40 leading-relaxed text-center">
-            Upload a photo or draw your own.
+            Drop an image anywhere, or draw your own.
           </p>
         </div>
 
-        {/* Tab selector */}
-        <div className="flex gap-1 p-1 rounded-xl bg-surface-800 border border-surface-600">
-          {(['upload', 'draw'] as Tab[]).map((t) => (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={[
-                'px-5 py-2 rounded-lg text-sm font-medium transition-all',
-                tab === t
-                  ? 'bg-accent text-white shadow-md shadow-accent/30'
-                  : 'text-white/40 hover:text-white/70',
-              ].join(' ')}
-            >
-              {t === 'upload' ? 'Upload Image' : 'Draw'}
-            </button>
-          ))}
-        </div>
-
-        {/* ── Upload tab ── */}
-        {tab === 'upload' && (
+        {!showDraw ? (
           <div className="flex flex-col items-center gap-4 w-full">
-            <div
+            <button
+              onClick={() => setShowDraw(true)}
+              className="px-8 py-3 rounded-xl bg-white text-black font-semibold text-sm tracking-wide hover:bg-white/90 transition-all shadow-lg"
+            >
+              Draw
+            </button>
+
+            <label
+              htmlFor="file-upload"
               className={[
                 'relative w-full rounded-2xl border transition-all duration-200 cursor-pointer',
                 'bg-surface-800/60 backdrop-blur-sm',
@@ -90,20 +90,15 @@ export default function UploadPanel({ onUpload }: Props) {
                   ? 'border-accent shadow-[0_0_30px_rgba(99,102,241,0.25)] scale-[1.01]'
                   : 'border-surface-600 hover:border-surface-500 hover:bg-surface-800',
               ].join(' ')}
-              onDragEnter={(e) => { e.preventDefault(); setDragging(true); }}
-              onDragOver={(e)  => { e.preventDefault(); setDragging(true); }}
-              onDragLeave={() => setDragging(false)}
-              onDrop={onDrop}
-              onClick={() => inputRef.current?.click()}
             >
               <input
+                id="file-upload"
                 ref={inputRef}
                 type="file"
                 accept="image/*"
                 className="hidden"
                 onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
               />
-
               <div className="flex flex-col items-center gap-4 py-10 sm:py-14 px-8">
                 <div className={[
                   'w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-200',
@@ -132,7 +127,7 @@ export default function UploadPanel({ onUpload }: Props) {
                   </p>
                 </div>
               </div>
-            </div>
+            </label>
 
             {error && <p className="text-xs text-red-400/80">{error}</p>}
 
@@ -144,11 +139,14 @@ export default function UploadPanel({ onUpload }: Props) {
               ))}
             </div>
           </div>
-        )}
-
-        {/* ── Draw tab ── */}
-        {tab === 'draw' && (
+        ) : (
           <div className="w-full">
+            <button
+              onClick={() => setShowDraw(false)}
+              className="mb-4 text-xs text-white/40 hover:text-white/70 transition-colors"
+            >
+              ← Back
+            </button>
             <DrawPanel onConvert={onUpload} />
           </div>
         )}
